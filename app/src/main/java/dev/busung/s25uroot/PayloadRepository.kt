@@ -102,8 +102,6 @@ class PayloadRepository(private val context: Context) {
     private fun rawUrl(commit: String, path: String) = "$RAW_REPOSITORY/$commit/$path"
 
     private fun pinArtifactUrl(url: String, commit: String): String {
-        require(url.startsWith(MUTABLE_RAW_PREFIX)) { context.getString(R.string.repo_url_invalid) }
-        return "$RAW_REPOSITORY/$commit/${url.removePrefix(MUTABLE_RAW_PREFIX)}"
         val match = Regex("^https://raw\\.githubusercontent\\.com/[^/]+/[^/]+/[^/]+/(.+)$").matchEntire(url)
         val relativePath = match?.groupValues?.get(1)
             ?.takeUnless { it.contains("..") }
