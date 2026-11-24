@@ -104,6 +104,11 @@ class PayloadRepository(private val context: Context) {
     private fun pinArtifactUrl(url: String, commit: String): String {
         require(url.startsWith(MUTABLE_RAW_PREFIX)) { context.getString(R.string.repo_url_invalid) }
         return "$RAW_REPOSITORY/$commit/${url.removePrefix(MUTABLE_RAW_PREFIX)}"
+        val match = Regex("^https://raw\\.githubusercontent\\.com/[^/]+/[^/]+/[^/]+/(.+)$").matchEntire(url)
+        val relativePath = match?.groupValues?.get(1)
+            ?.takeUnless { it.contains("..") }
+            ?: throw IllegalArgumentException(context.getString(R.string.repo_url_invalid))
+        return "$RAW_REPOSITORY/$commit/$relativePath"
     }
 
     private fun downloadBytes(url: String, maximum: Int): ByteArray {
